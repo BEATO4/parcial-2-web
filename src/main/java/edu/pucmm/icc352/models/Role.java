@@ -1,4 +1,7 @@
 package edu.pucmm.icc352.models;
 
-public class Role {
+public enum Role {
+    ADMIN,
+    ORGANIZER,
+    PARTICIPANT
 }
