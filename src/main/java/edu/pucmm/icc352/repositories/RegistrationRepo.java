@@ -1,4 +1,28 @@
 package edu.pucmm.icc352.repositories;
 
-public class RegistrationRepo {
+import edu.pucmm.icc352.models.Registration;
+import java.util.Optional;
+
+public class RegistrationRepo extends BaseRepo<Registration> {
+
+    public RegistrationRepo() { super(Registration.class); }
+
+    public Optional<Registration> findByToken(String token) {
+        try (var s = openSession()) {
+            return s.createQuery(
+                            "FROM Registration WHERE qrToken = :t", Registration.class)
+                    .setParameter("t", token)
+                    .uniqueResultOptional();
+        }
+    }
+
+    public Optional<Registration> findByUserAndEvent(Long userId, Long eventId) {
+        try (var s = openSession()) {
+            return s.createQuery(
+                            "FROM Registration WHERE user.id = :u AND event.id = :e", Registration.class)
+                    .setParameter("u", userId)
+                    .setParameter("e", eventId)
+                    .uniqueResultOptional();
+        }
+    }
 }

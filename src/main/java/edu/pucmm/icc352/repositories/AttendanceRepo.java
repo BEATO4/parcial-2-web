@@ -1,4 +1,31 @@
 package edu.pucmm.icc352.repositories;
 
-public class AttendanceRepo {
+import edu.pucmm.icc352.models.Attendance;
+import java.util.List;
+import java.util.Optional;
+
+public class AttendanceRepo extends BaseRepo<Attendance> {
+
+    public AttendanceRepo() { super(Attendance.class); }
+
+    public boolean existsByRegistration(Long registrationId) {
+        try (var s = openSession()) {
+            Long count = s.createQuery(
+                            "SELECT COUNT(a) FROM Attendance a WHERE a.registration.id = :id", Long.class)
+                    .setParameter("id", registrationId)
+                    .uniqueResult();
+            return count != null && count > 0;
+        }
+    }
+
+    public List<Object[]> countByHour(Long eventId) {
+        try (var s = openSession()) {
+            return s.createQuery(
+                            "SELECT HOUR(a.scannedAt), COUNT(a) FROM Attendance a " +
+                                    "WHERE a.registration.event.id = :id GROUP BY HOUR(a.scannedAt) ORDER BY 1",
+                            Object[].class)
+                    .setParameter("id", eventId)
+                    .list();
+        }
+    }
 }
