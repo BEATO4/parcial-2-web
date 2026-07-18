@@ -1,0 +1,116 @@
+package edu.pucmm.icc352.controllers;
+
+import edu.pucmm.icc352.models.Event;
+import edu.pucmm.icc352.services.EventService;
+import io.javalin.apibuilder.ApiBuilder;
+import java.time.LocalDateTime;
+import java.util.Map;
+
+public class EventController {
+
+    private static final EventService svc = new EventService();
+
+    @SuppressWarnings("unchecked")
+    public static void register() {
+
+        ApiBuilder.get("/api/events", ctx -> {
+            ctx.json(svc.findPublished());
+        });
+
+        ApiBuilder.get("/api/events/mine", ctx -> {
+            Long userId = ctx.sessionAttribute("userId");
+            if (userId == null) {
+                ctx.status(401).json(Map.of("error", "No autenticado."));
+                return;
+            }
+            ctx.json(svc.findByOrganizer(userId));
+        });
+
+        ApiBuilder.get("/api/events/{id}", ctx -> {
+            long id = Long.parseLong(ctx.pathParam("id"));
+            ctx.json(svc.findById(id));
+        });
+
+        ApiBuilder.post("/api/events", ctx -> {
+            Long userId = ctx.sessionAttribute("userId");
+            String role = ctx.sessionAttribute("role");
+            if (userId == null) {
+                ctx.status(401).json(Map.of("error", "No autenticado."));
+                return;
+            }
+            if ("PARTICIPANT".equals(role)) {
+                ctx.status(403).json(Map.of("error", "Sin permiso."));
+                return;
+            }
+            Map<String, Object> b = (Map<String, Object>) ctx.bodyAsClass(Map.class);
+            String endDateTimeRaw = (String) b.get("endDateTime");
+            Event event = svc.create(
+                    (String) b.get("title"),
+                    (String) b.get("description"),
+                    LocalDateTime.parse((String) b.get("dateTime")),
+                    endDateTimeRaw == null || endDateTimeRaw.isBlank() ? null : LocalDateTime.parse(endDateTimeRaw),
+                    (String) b.get("location"),
+                    ((Number) b.get("maxCapacity")).intValue(),
+                    userId
+            );
+            ctx.status(201).json(event);
+        });
+
+        ApiBuilder.put("/api/events/{id}", ctx -> {
+            Long userId = ctx.sessionAttribute("userId");
+            String role = ctx.sessionAttribute("role");
+            if (userId == null) {
+                ctx.status(401).json(Map.of("error", "No autenticado."));
+                return;
+            }
+            if ("PARTICIPANT".equals(role)) {
+                ctx.status(403).json(Map.of("error", "Sin permiso."));
+                return;
+            }
+            long eventId = Long.parseLong(ctx.pathParam("id"));
+            Map<String, Object> b = (Map<String, Object>) ctx.bodyAsClass(Map.class);
+            String endDateTimeRaw = (String) b.get("endDateTime");
+            ctx.json(svc.update(
+                    eventId, userId,
+                    (String) b.get("title"),
+                    (String) b.get("description"),
+                    LocalDateTime.parse((String) b.get("dateTime")),
+                    endDateTimeRaw == null || endDateTimeRaw.isBlank() ? null : LocalDateTime.parse(endDateTimeRaw),
+                    (String) b.get("location"),
+                    ((Number) b.get("maxCapacity")).intValue()
+            ));
+        });
+
+        ApiBuilder.patch("/api/events/{id}/publish", ctx -> {
+            Long userId = ctx.sessionAttribute("userId");
+            String role = ctx.sessionAttribute("role");
+            if (userId == null) {
+                ctx.status(401).json(Map.of("error", "No autenticado."));
+                return;
+            }
+            if ("PARTICIPANT".equals(role)) {
+                ctx.status(403).json(Map.of("error", "Sin permiso."));
+                return;
+            }
+            long eventId = Long.parseLong(ctx.pathParam("id"));
+            Map<String, Object> b = (Map<String, Object>) ctx.bodyAsClass(Map.class);
+            boolean publish = (Boolean) b.get("publish");
+            ctx.json(svc.setPublished(eventId, userId, publish));
+        });
+
+        ApiBuilder.patch("/api/events/{id}/cancel", ctx -> {
+            Long userId = ctx.sessionAttribute("userId");
+            String role = ctx.sessionAttribute("role");
+            if (userId == null) {
+                ctx.status(401).json(Map.of("error", "No autenticado."));
+                return;
+            }
+            if ("PARTICIPANT".equals(role)) {
+                ctx.status(403).json(Map.of("error", "Sin permiso."));
+                return;
+            }
+            long eventId = Long.parseLong(ctx.pathParam("id"));
+            ctx.json(svc.cancel(eventId, userId)); //si
+        });
+    }
+}

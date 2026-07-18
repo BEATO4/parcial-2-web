@@ -7,6 +7,9 @@ import java.time.LocalDateTime;
 @Table(name = "users")
 public class User {
 
+
+    private String hashpw;
+
     public void setId(Long id) {
         this.id = id;
     }
@@ -99,14 +102,13 @@ public class User {
 
     public User() {}
 
-    public User(Long id, String email, String password, String name, Role role, boolean blocked, boolean deletable, LocalDateTime createdAt) {
-        this.id = id;
+    public User(String email, String password, String name, Role role) {
         this.email = email;
         this.password = password;
         this.name = name;
         this.role = role;
-        this.blocked = blocked;
-        this.deletable = deletable;
-        this.createdAt = createdAt;
+        this.blocked = false;
+        this.deletable = true;
+        this.createdAt = LocalDateTime.now();
     }
 }

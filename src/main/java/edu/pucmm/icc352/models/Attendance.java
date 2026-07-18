@@ -26,6 +26,10 @@ public class Attendance {
         this.scannedAt = scannedAt;
     }
 
+    public Attendance(Registration reg) {
+        this.registration = reg;
+    }
+
     public Long getId() {
         return id;
     }

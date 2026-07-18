@@ -45,6 +45,13 @@ public class Registration {
         this.registeredAt = registeredAt;
     }
 
+    public Registration(User user, Event event) {
+        this.user = user;
+        this.event = event;
+        this.qrToken = UUID.randomUUID().toString();
+        this.registeredAt = LocalDateTime.now();
+    }
+
     public Long getId() {
         return id;
     }

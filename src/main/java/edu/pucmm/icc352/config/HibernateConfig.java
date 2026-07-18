@@ -23,7 +23,6 @@ public class HibernateConfig {
         String name = System.getenv("DB_NAME") != null ? System.getenv("DB_NAME") : "eventosdb";
         String url  = "jdbc:h2:tcp://" + host + ":" + port + "/~/" + name + ";IFEXISTS=FALSE";
 
-        // Retry hasta que H2 esté listo
         int attempts = 0;
         while (attempts < 10) {
             try {
@@ -35,11 +34,12 @@ public class HibernateConfig {
                 return;
             } catch (Exception e) {
                 attempts++;
-                System.out.println("H2 no listo, reintento " + attempts + "/10...");
+                System.out.println("H2 no listo, reintentando " + attempts + "/10...");
+                e.printStackTrace();
                 try { Thread.sleep(3000); } catch (InterruptedException ie) { Thread.currentThread().interrupt(); }
             }
         }
-        throw new RuntimeException("No se pudo conectar a H2 después de 10 intentos");
+        throw new RuntimeException("No se pudo conectar a H2 despues de 10 intentos");
     }
 
     private static void startEmbeddedH2() {

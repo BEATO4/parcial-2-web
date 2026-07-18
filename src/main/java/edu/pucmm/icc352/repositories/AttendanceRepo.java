@@ -28,4 +28,13 @@ public class AttendanceRepo extends BaseRepo<Attendance> {
                     .list();
         }
     }
+
+    public Optional<Attendance> findByRegistration(Long registrationId) {
+        try (var s = openSession()) {
+            return s.createQuery(
+                            "FROM Attendance WHERE registration.id = :id", Attendance.class)
+                    .setParameter("id", registrationId)
+                    .uniqueResultOptional();
+        }
+    }
 }

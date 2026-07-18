@@ -52,6 +52,22 @@ public class Event {
         this.createdAt = createdAt;
     }
 
+    public Event(String title, String description, LocalDateTime dateTime, LocalDateTime effectiveEnd, String location, int maxCapacity, User organizer) {
+        this.title = title;
+        this.description = description;
+        this.dateTime = dateTime;
+        this.endDateTime = effectiveEnd;
+        this.location = location;
+        this.maxCapacity = maxCapacity;
+        this.organizer = organizer;
+        this.status = EventStatus.DRAFT;
+        this.createdAt = LocalDateTime.now();
+    }
+
+    public Event(){
+
+    }
+
     public Long getId() {
         return id;
     }
