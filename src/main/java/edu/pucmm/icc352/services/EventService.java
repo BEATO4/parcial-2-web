@@ -14,11 +14,11 @@ public class EventService {
     public Event create(String title, String description, LocalDateTime dateTime, LocalDateTime endDateTime,
                         String location, int maxCapacity, Long organizerId) {
         User organizer = userRepo.findById(organizerId)
-                .orElseThrow(() -> new IllegalArgumentException("Organizador no encontrado."));
+                .orElseThrow(() -> new IllegalArgumentException("Organizador no encontrado"));
         if (dateTime.isBefore(LocalDateTime.now()))
-            throw new IllegalArgumentException("La fecha del evento debe ser futura.");
+            throw new IllegalArgumentException("La fecha de inicio no puede ser en el pasado");
         if (maxCapacity < 1)
-            throw new IllegalArgumentException("El cupo debe ser al menos 1.");
+            throw new IllegalArgumentException("El cupo debe ser al menos 1");
         LocalDateTime effectiveEnd = normalizeEndDateTime(dateTime, endDateTime);
         return repo.save(new Event(title, description, dateTime, effectiveEnd, location, maxCapacity, organizer));
     }
@@ -39,7 +39,7 @@ public class EventService {
     public Event setPublished(Long eventId, Long requesterId, boolean publish) {
         Event event = getEditableEvent(eventId, requesterId);
         if (event.getStatus() == EventStatus.CANCELLED)
-            throw new IllegalStateException("No se puede publicar un evento cancelado.");
+            throw new IllegalStateException("No se puede publicar un evento cancelado");
         event.setStatus(publish ? EventStatus.PUBLISHED : EventStatus.DRAFT);
         return repo.update(event);
     }

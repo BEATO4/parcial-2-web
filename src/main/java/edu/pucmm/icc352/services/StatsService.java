@@ -23,11 +23,12 @@ public class StatsService {
                 : Math.round((totalAsistentes * 100.0 / totalInscritos) * 10) / 10.0;
 
         Map<String, Object> stats = new LinkedHashMap<>();
-        stats.put("totalInscritos",       totalInscritos);
-        stats.put("totalAsistentes",      totalAsistentes);
-        stats.put("porcentajeAsistencia", porcentaje);
-        stats.put("inscripcionesPorDia",  getRegistrationsByDay(eventId));
-        stats.put("asistenciaPorHora",    getAttendanceByHour(eventId));
+        stats.put("totalRegistrations",    totalInscritos);
+        stats.put("totalAttendances",      totalAsistentes);
+        stats.put("absentees",             totalInscritos - totalAsistentes);
+        stats.put("attendanceRate",        porcentaje);
+        stats.put("inscripcionesPorDia",   getRegistrationsByDay(eventId));
+        stats.put("asistenciaPorHora",     getAttendanceByHour(eventId));
         return stats;
     }
 

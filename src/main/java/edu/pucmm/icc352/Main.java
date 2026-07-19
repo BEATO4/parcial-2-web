@@ -7,7 +7,7 @@ import io.javalin.Javalin;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import io.javalin.json.JavalinJackson;
-
+import io.javalin.http.staticfiles.Location;
 
 public class Main {
 
@@ -18,13 +18,20 @@ public class Main {
         SeedData.createDefaultAdmin();
 
         Javalin app = Javalin.create(config -> {
-            config.staticFiles.add("/public");
+
+            config.staticFiles.add("/public", Location.CLASSPATH);
+
             config.jsonMapper(new JavalinJackson().updateMapper(mapper -> {
                 mapper.registerModule(new JavaTimeModule());
                 mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
-            }));            config.bundledPlugins.enableCors(cors ->
+            }));
+
+            config.bundledPlugins.enableCors(cors ->
                     cors.addRule(it -> it.anyHost())
             );
+
+
+
             config.routes.apiBuilder(() -> {
                 AuthController.register();
                 EventController.register();
@@ -32,6 +39,8 @@ public class Main {
                 AdminController.register();
                 StatsController.register();
             });
+
+            config.routes.get("/", ctx -> ctx.redirect("/index.html"));
 
             config.routes.exception(IllegalArgumentException.class, (e, ctx) -> {
                 ctx.status(400);
