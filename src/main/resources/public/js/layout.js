@@ -12,7 +12,7 @@ function buildLayout(pageTitle, pageSubtitle) {
     const hidden = roles && !roles.includes(role) ? 'style="display:none"' : '';
     const active = path === href ? 'active' : '';
     return `<a href="${href}" class="nav-item ${active}" ${hidden}>
-              <i class="bi ${icon}"></i> ${label}
+              <i class="ph ${icon}"></i> ${label}
             </a>`;
   }
 
@@ -23,22 +23,22 @@ function buildLayout(pageTitle, pageSubtitle) {
     <!-- SIDEBAR -->
     <aside class="sidebar" id="sidebar">
       <a href="dashboard.html" class="sidebar-logo">
-        <div class="logo-icon"><i class="bi bi-lightning-charge-fill"></i></div>
+        <div class="logo-icon"><i class="ph ph-lightning-fill"></i></div>
         <div class="logo-text">Event<span>Pass</span></div>
       </a>
 
       <nav class="sidebar-nav">
         <div class="sidebar-section">Principal</div>
-        ${navLink('dashboard.html',      'bi-grid-1x2-fill',    'Dashboard')}
-        ${navLink('events.html',         'bi-calendar-event',   'Eventos')}
-        ${navLink('my-registrations.html','bi-ticket-perforated','Mis Inscripciones', ['PARTICIPANT','ORGANIZER','ADMIN'])}
+        ${navLink('dashboard.html',      'ph-squares-four-fill',    'Dashboard')}
+        ${navLink('events.html',         'ph-calendar',   'Eventos')}
+        ${navLink('my-registrations.html','ph-ticket','Mis Inscripciones', ['PARTICIPANT','ORGANIZER','ADMIN'])}
 
         <div class="sidebar-section" style="margin-top:8px">Gestión</div>
-        ${navLink('my-events.html',  'bi-calendar-plus',  'Mis Eventos',    ['ORGANIZER','ADMIN'])}
-        ${navLink('scan.html',       'bi-qr-code-scan',   'Escanear QR',    ['ORGANIZER','ADMIN'])}
+        ${navLink('my-events.html',  'ph-calendar-plus',  'Mis Eventos',    ['ORGANIZER','ADMIN'])}
+        ${navLink('scan.html',       'ph-qr-code',   'Escanear QR',    ['ORGANIZER','ADMIN'])}
 
         <div class="sidebar-section" style="margin-top:8px" data-role="ADMIN" style="display:none">Admin</div>
-        ${navLink('admin.html',      'bi-shield-check',   'Panel Admin',    ['ADMIN'])}
+        ${navLink('admin.html',      'ph-shield-check',   'Panel Admin',    ['ADMIN'])}
       </nav>
 
       <div class="sidebar-footer">
@@ -49,7 +49,7 @@ function buildLayout(pageTitle, pageSubtitle) {
             <div class="user-role">${role}</div>
           </div>
           <button class="btn-logout" title="Cerrar sesión" onclick="doLogout()">
-            <i class="bi bi-box-arrow-right"></i>
+            <i class="ph ph-sign-out"></i>
           </button>
         </div>
       </div>
@@ -59,7 +59,7 @@ function buildLayout(pageTitle, pageSubtitle) {
     <div class="main-content">
       <header class="topbar">
         <button class="topbar-toggle" id="sidebar-toggle">
-          <i class="bi bi-list"></i>
+          <i class="ph ph-list"></i>
         </button>
         <div style="flex:1">
           <div class="topbar-title">${pageTitle}</div>

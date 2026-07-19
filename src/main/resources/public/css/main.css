@@ -22,9 +22,9 @@
   
   --border: #30363d;
   
-  --radius-sm: 6px;
-  --radius-md: 10px;
-  --radius-lg: 16px;
+  --radius-sm: 0px;
+  --radius-md: 2px;
+  --radius-lg: 4px;
   
   --shadow-sm: 0 4px 6px rgba(0, 0, 0, 0.1);
   --shadow-md: 0 10px 15px rgba(0, 0, 0, 0.2);
@@ -95,14 +95,14 @@ a:hover {
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, var(--primary), var(--accent));
+  background: var(--primary);
   color: #fff;
   border: none;
-  box-shadow: 0 2px 4px rgba(56, 139, 253, 0.3);
+  box-shadow: none;
 }
 .btn-primary:hover:not(:disabled) {
-  background: linear-gradient(135deg, var(--accent), var(--primary));
-  box-shadow: 0 4px 8px rgba(56, 139, 253, 0.4);
+  background: var(--accent);
+  box-shadow: none;
 }
 
 .btn-secondary {
@@ -288,8 +288,9 @@ textarea.form-control {
 .auth-bg {
   position: absolute;
   top: 0; left: 0; right: 0; bottom: 0;
-  background: radial-gradient(circle at 15% 50%, rgba(88, 166, 255, 0.08), transparent 50%),
-              radial-gradient(circle at 85% 30%, rgba(163, 113, 247, 0.08), transparent 50%);
+  background-color: var(--bg-base);
+  background-image: radial-gradient(var(--border) 1px, transparent 1px);
+  background-size: 20px 20px;
   z-index: -1;
 }
 
@@ -313,11 +314,11 @@ textarea.form-control {
   margin-bottom: 24px;
 }
 .logo-icon {
-  background: linear-gradient(135deg, var(--primary), var(--accent));
+  background: var(--primary);
   color: #fff;
   width: 40px;
   height: 40px;
-  border-radius: 10px;
+  border-radius: var(--radius-md);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -390,10 +391,10 @@ textarea.form-control {
    ============================================================ */
 .sidebar {
   position: fixed;
-  top: 0; left: 0; bottom: 0;
+  top: 0; right: 0; bottom: 0;
   width: 260px;
   background-color: var(--bg-raised);
-  border-right: 1px solid var(--border);
+  border-left: 1px solid var(--border);
   display: flex;
   flex-direction: column;
   z-index: 100;
@@ -473,8 +474,8 @@ textarea.form-control {
 .user-avatar {
   width: 40px;
   height: 40px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, var(--primary), var(--accent));
+  border-radius: var(--radius-sm);
+  background: var(--primary);
   color: #fff;
   display: flex;
   align-items: center;
@@ -533,7 +534,7 @@ textarea.form-control {
    6. Main Content Area
    ============================================================ */
 .main-content {
-  margin-left: 260px;
+  margin-right: 260px;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
@@ -750,6 +751,11 @@ textarea.form-control {
 /* ============================================================
    11. Grid Layouts
    ============================================================ */
+.grid-2 {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
 .grid-4 {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -780,7 +786,7 @@ textarea.form-control {
 
 .event-card-accent {
   height: 4px;
-  background: linear-gradient(90deg, var(--primary), var(--accent));
+  background: var(--primary);
 }
 
 .event-card-body {
@@ -1314,13 +1320,13 @@ textarea.form-control {
 
 @media (max-width: 768px) {
   .sidebar {
-    transform: translateX(-100%);
+    transform: translateX(100%);
   }
   .sidebar.open {
     transform: translateX(0);
   }
   .main-content {
-    margin-left: 0;
+    margin-right: 0;
   }
   .topbar-toggle {
     display: block;

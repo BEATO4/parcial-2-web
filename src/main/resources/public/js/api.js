@@ -50,6 +50,14 @@ const api = {
 
   /* Stats */
   getStats: (eventId) => api.get(`/api/stats/${eventId}`),
+  wsStats: (eventId, onMessage, onError) => {
+    const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+    const host = window.location.host;
+    const ws = new WebSocket(`${protocol}//${host}/api/stats/ws/${eventId}`);
+    ws.onmessage = (event) => onMessage(JSON.parse(event.data));
+    if (onError) ws.onerror = onError;
+    return ws;
+  },
 
   /* Admin */
   adminGetUsers:    ()              => api.get('/api/admin/users'),
@@ -97,7 +105,7 @@ function showToast(message, type = 'info', title = null, duration = 4000) {
       <div class="toast-msg">${message}</div>
     </div>
     <button class="toast-dismiss" onclick="this.closest('.toast').remove()">
-      <i class="bi bi-x"></i>
+      <i class="ph ph-x"></i>
     </button>`;
   container.appendChild(toast);
   setTimeout(() => { toast.classList.add('fade-out'); setTimeout(() => toast.remove(), 300); }, duration);
@@ -315,13 +323,13 @@ function statusStepper(currentStatus) {
   if (currentStatus === 'CANCELLED') {
     return `<div style="text-align:center;padding:10px 0">
       <span class="badge badge-red" style="font-size:13px;padding:6px 14px">
-        <i class="bi bi-x-circle"></i> Evento Cancelado
+        <i class="ph ph-x-circle"></i> Evento Cancelado
       </span></div>`;
   }
   return `<div class="status-steps">
     ${steps.map((s,i) => `
       <div class="status-step ${i < cur ? 'done' : i === cur ? 'active' : ''}">
-        <div class="step-dot">${i < cur ? '<i class="bi bi-check"></i>' : s.icon}</div>
+        <div class="step-dot">${i < cur ? '<i class="ph ph-check"></i>' : s.icon}</div>
         <div class="step-label">${s.label}</div>
       </div>`).join('')}
   </div>`;

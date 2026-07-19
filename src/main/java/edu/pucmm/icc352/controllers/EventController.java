@@ -2,8 +2,8 @@ package edu.pucmm.icc352.controllers;
 
 import edu.pucmm.icc352.models.Event;
 import edu.pucmm.icc352.services.EventService;
+import edu.pucmm.icc352.dto.EventDTO;
 import io.javalin.apibuilder.ApiBuilder;
-import java.time.LocalDateTime;
 import java.util.Map;
 
 public class EventController {
@@ -42,15 +42,14 @@ public class EventController {
                 ctx.status(403).json(Map.of("error", "Sin permiso."));
                 return;
             }
-            Map<String, Object> b = (Map<String, Object>) ctx.bodyAsClass(Map.class);
-            String endDateTimeRaw = (String) b.get("endDateTime");
+            EventDTO dto = ctx.bodyAsClass(EventDTO.class);
             Event event = svc.create(
-                    (String) b.get("title"),
-                    (String) b.get("description"),
-                    LocalDateTime.parse((String) b.get("dateTime")),
-                    endDateTimeRaw == null || endDateTimeRaw.isBlank() ? null : LocalDateTime.parse(endDateTimeRaw),
-                    (String) b.get("location"),
-                    ((Number) b.get("maxCapacity")).intValue(),
+                    dto.getTitle(),
+                    dto.getDescription(),
+                    dto.getDateTime(),
+                    dto.getEndDateTime(),
+                    dto.getLocation(),
+                    dto.getMaxCapacity() == null ? 0 : dto.getMaxCapacity(),
                     userId
             );
             ctx.status(201).json(event);
@@ -68,16 +67,15 @@ public class EventController {
                 return;
             }
             long eventId = Long.parseLong(ctx.pathParam("id"));
-            Map<String, Object> b = (Map<String, Object>) ctx.bodyAsClass(Map.class);
-            String endDateTimeRaw = (String) b.get("endDateTime");
+            EventDTO dto = ctx.bodyAsClass(EventDTO.class);
             ctx.json(svc.update(
                     eventId, userId,
-                    (String) b.get("title"),
-                    (String) b.get("description"),
-                    LocalDateTime.parse((String) b.get("dateTime")),
-                    endDateTimeRaw == null || endDateTimeRaw.isBlank() ? null : LocalDateTime.parse(endDateTimeRaw),
-                    (String) b.get("location"),
-                    ((Number) b.get("maxCapacity")).intValue()
+                    dto.getTitle(),
+                    dto.getDescription(),
+                    dto.getDateTime(),
+                    dto.getEndDateTime(),
+                    dto.getLocation(),
+                    dto.getMaxCapacity() == null ? 0 : dto.getMaxCapacity()
             ));
         });
 

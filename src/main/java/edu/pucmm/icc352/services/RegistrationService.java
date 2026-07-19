@@ -24,7 +24,9 @@ public class RegistrationService {
         long inscritos = evtRepo.countRegistrations(eventId);
         if (inscritos >= event.getMaxCapacity())
             throw new IllegalStateException("El evento esta lleno.");
-        return regRepo.save(new Registration(user, event));
+        Registration newReg = regRepo.save(new Registration(user, event));
+        StatsBroadcaster.broadcast(eventId);
+        return newReg;
     }
 
     public void cancel(Long userId, Long eventId) {
@@ -33,6 +35,7 @@ public class RegistrationService {
         if (reg.getEvent().getDateTime().isBefore(LocalDateTime.now()))
             throw new IllegalStateException("No puedes cancelar despues de la fecha del evento.");
         regRepo.delete(reg);
+        StatsBroadcaster.broadcast(eventId);
     }
 
     public Attendance markAttendance(String qrToken) {
@@ -43,8 +46,10 @@ public class RegistrationService {
 
         Registration reg = regRepo.findByToken(normalizedToken)
                 .orElseThrow(() -> new IllegalArgumentException("QR invalido o no encontrado."));
-        return attRepo.findByRegistration(reg.getId())
+        Attendance attendance = attRepo.findByRegistration(reg.getId())
                 .orElseGet(() -> attRepo.save(new Attendance(reg)));
+        StatsBroadcaster.broadcast(reg.getEvent().getId());
+        return attendance;
     }
 
     public byte[] generateQRImage(String qrToken) {

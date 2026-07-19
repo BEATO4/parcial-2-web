@@ -1,6 +1,7 @@
 package edu.pucmm.icc352.controllers;
 
 import edu.pucmm.icc352.services.StatsService;
+import edu.pucmm.icc352.services.StatsBroadcaster;
 import io.javalin.apibuilder.ApiBuilder;
 import java.util.Map;
 
@@ -23,6 +24,23 @@ public class StatsController {
             }
             long eventId = Long.parseLong(ctx.pathParam("eventId"));
             ctx.json(svc.getEventStats(eventId));
+        });
+
+        ApiBuilder.ws("/api/stats/ws/{eventId}", ws -> {
+            ws.onConnect(ctx -> {
+                Long userId = ctx.sessionAttribute("userId");
+                String role = ctx.sessionAttribute("role");
+                if (userId == null || "PARTICIPANT".equals(role)) {
+                    ctx.closeSession(1008, "Sin permiso");
+                    return;
+                }
+                long eventId = Long.parseLong(ctx.pathParam("eventId"));
+                StatsBroadcaster.addConnection(eventId, ctx);
+            });
+            ws.onClose(ctx -> {
+                long eventId = Long.parseLong(ctx.pathParam("eventId"));
+                StatsBroadcaster.removeConnection(eventId, ctx);
+            });
         });
     }
 }
